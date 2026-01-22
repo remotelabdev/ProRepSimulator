@@ -29,6 +29,9 @@ class DHondt:
         dhondt_vals = {}
         for party,seat_allocated in seat_allocation.items():
             vote_prop = self._votes[party]
+            # Why +1 in the denominator? Because we don't like to divide by zero,
+            # and we guess you wouldn't either! 😉
+            # (Seriously: it's dividing by "seats they'd have AFTER getting this one")
             dhondt_val = vote_prop /( seat_allocated + 1 )
             dhondt_vals[party] = dhondt_val
 
