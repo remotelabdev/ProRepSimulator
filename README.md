@@ -1,9 +1,12 @@
-# Proportional Representation Seat Allocation Simulator
+# Proportional Representation Simulator
 
-This project implements two electoral seat allocation methods used in proportional representation voting systems:
+**Educational tool for exploring proportional representation electoral systems**
+
+This project implements multiple electoral methods used in proportional representation voting systems:
 
 - **D'Hondt method**: Divisor-based method that slightly favors larger parties
-- **Sainte-Laguë method**: Modified divisor method that is more proportional and slightly favors smaller parties
+- **Sainte-Laguë method**: Modified divisor method that is more proportional
+- **Open List PR**: Two-stage system where voters can override party rankings through preference votes
 
 ## Two Versions Available
 
@@ -46,11 +49,18 @@ git worktree list
 
 ## Features
 
-- ✅ **Two allocation algorithms**: D'Hondt and Sainte-Laguë
-- ✅ **Comparison framework**: Compare results between both methods
-- ✅ **Interactive visualizer**: Jupyter notebook with animated seat allocation
+### Core Algorithms
+- ✅ **Two allocation methods**: D'Hondt and Sainte-Laguë
+- ✅ **Open List PR**: Voter preferences override party rankings
+- ✅ **Comparison framework**: Compare results between methods
 - ✅ **PEP 8 compliant**: Clean, properly formatted Python code
 - ✅ **Type-safe calculations**: Integer-domain algorithms avoiding floating-point rounding issues
+
+### Educational Materials
+- ✅ **Interactive Jupyter notebooks**: Modify scenarios and see results instantly
+- ✅ **Command-line demos**: Quick demonstrations (`demo_openlist.py`)
+- ✅ **Professional visualizations**: Charts showing candidate "jumps"
+- ✅ **Comprehensive documentation**: Quick-start guides and technical specs
 
 ## Usage
 
@@ -99,14 +109,45 @@ print(party_allocations)
 print(differences)
 ```
 
-### Interactive Visualization
+### Open List PR
+
+```python
+from src.main import Candidate, OpenListPR
+
+# Create candidates with list positions
+candidates = [
+    Candidate(name="Alice", party="Party A", list_position=1),
+    Candidate(name="Bob", party="Party A", list_position=2),
+    Candidate(name="Carol", party="Party A", list_position=3),
+]
+
+# Run open list election
+election = OpenListPR(
+    parties=['Party A'],
+    candidates=candidates,
+    party_votes={'Party A': 100000},
+    candidate_votes={'Alice': 10000, 'Bob': 30000, 'Carol': 25000},
+    total_seats=2,
+    method='dhondt',
+    ranking_variant='pure'
+)
+
+results = election.run_election()
+# Bob and Carol elected (jumped ahead of Alice!)
+```
+
+### Quick Demos
 
 ```bash
-# Launch Jupyter notebook visualizer
-./run_visualizer.sh
+# Command-line demo
+python3 demo_openlist.py
 
-# Or manually:
-source venv/bin/activate
+# Generate visualizations (requires matplotlib)
+pip install -r requirements.txt
+python3 visualize_openlist.py
+
+# Interactive Jupyter notebooks
+jupyter notebook openlist_demo.ipynb
 jupyter notebook dhondt_visualizer.ipynb
 ```
 
@@ -155,16 +196,28 @@ Each bug is documented in the code with technical explanation, vivid analogy, an
 ```
 ProRepSimulator/                    # Main branch (educational)
 ├── src/
-│   └── main.py                     # Implementation with journey comments
-├── dhondt_visualizer.ipynb         # Interactive visualization
-├── run_visualizer.sh               # Launcher script
-├── .gitignore
+│   └── main.py                     # Core algorithms (DHondt, SatineLague, OpenListPR)
+├── docs/
+│   ├── OPEN_LIST_DESIGN.md         # Technical specification
+│   ├── OPENLIST_QUICKSTART.md      # Beginner-friendly guide
+│   └── VISUALIZATION_GUIDE.md      # Chart customization
+├── demo_openlist.py                # Command-line demonstration
+├── openlist_demo.ipynb             # Interactive Open List notebook
+├── visualize_openlist.py           # Visualization generator
+├── dhondt_visualizer.ipynb         # D'Hondt vs Sainte-Laguë comparison
+├── requirements.txt                # Python dependencies
 └── README.md                       # This file
 
 ProRepSimulator-production/         # Production branch (clean)
 └── src/
-    └── main.py                     # Clean implementation with docstrings
+    └── main.py                     # Clean implementation
 ```
+
+## Documentation
+
+- **[Open List Quick Start](docs/OPENLIST_QUICKSTART.md)** - What is Open List PR and why it matters
+- **[Technical Design](docs/OPEN_LIST_DESIGN.md)** - Algorithm details and data structures
+- **[Visualization Guide](docs/VISUALIZATION_GUIDE.md)** - Customizing charts and graphs
 
 ## Author
 

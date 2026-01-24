@@ -1,0 +1,12 @@
+# ProRepSimulator Dependencies
+
+# Core visualization
+matplotlib>=3.5.0
+numpy>=1.21.0
+
+# Optional: Jupyter notebook support
+jupyter>=1.0.0
+notebook>=6.4.0
+
+# Optional: Enhanced visualizations
+seaborn>=0.11.0
