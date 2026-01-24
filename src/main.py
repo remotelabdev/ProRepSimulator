@@ -250,6 +250,150 @@ class CompareSeatAllocation:
 
         return party_and_allocation, diff_dict  # Fixed: Added space after comma
 
+class Candidate:
+    """Represents a candidate on a party's electoral list."""
+
+    def __init__(self, name=None, party=None, list_position=None):
+        """
+        Initialize a candidate.
+
+        Args:
+            name: Candidate's identifier
+            party: Which party this candidate belongs to
+            list_position: Party's suggested ranking (1 = top)
+        """
+        if name:
+            self._name = name
+        if party:
+            self._party = party
+        if list_position:
+            self._list_position = list_position  # Fixed: was incorrectly set to None
+
+        # These get set later during the ranking process
+        self.preference_votes = 0  # Changed from None to 0 for clearer default
+        self.final_rank = None
+        self.elected = False
+
+
+class OpenListPR:
+    """Implements open list proportional representation."""
+
+    def __init__(self, parties, candidates, party_votes, candidate_votes,
+                 total_seats, method='dhondt', ranking_variant='pure'):
+        """
+        Initialize open list PR system.
+
+        Args:
+            parties: List of party names
+            candidates: List of Candidate objects
+            party_votes: Dict {party_name: vote_count}
+            candidate_votes: Dict {candidate_name: preference_vote_count}
+            total_seats: Total seats to allocate
+            method: 'dhondt' or 'satinelague'
+            ranking_variant: 'pure', 'modified', or 'flexible'
+        """
+        self._parties = parties  # Fixed: was incorrectly spelled as _paties
+        self._candidates = candidates
+        self._party_votes = party_votes
+        self._candidate_votes = candidate_votes
+        self._total_seats = total_seats
+        self._method = method
+        self._ranking_variant = ranking_variant
+
+        # These get filled during execution
+        self._party_seats = {}  # Stage 1 results
+        self._elected_candidates = []  # Stage 2 results
+
+    def allocate_party_seats(self):
+        """
+        Stage 1: Determine how many seats each party gets.
+
+        Uses existing DHondt/SatineLague classes (DRY approach).
+        """
+        if self._method == 'dhondt':
+            allocator = DHondt(
+                parties=self._parties,
+                votes=self._party_votes,
+                total_seats=self._total_seats
+            )
+            allocator.dhondt()
+        else:  # satinelague
+            allocator = SatineLague(
+                parties=self._parties,
+                votes=self._party_votes,
+                total_seats=self._total_seats
+            )
+            allocator.satinelague()
+
+        self._party_seats = allocator._seat_allocation
+        return self._party_seats
+
+    def rank_candidates_within_party(self, party):
+        """
+        Rank candidates for a single party.
+
+        Simple approach: filter by party and sort by preference votes.
+        No complex tree structures needed - Python handles sorting!
+        """
+        # Filter candidates belonging to this party
+        party_candidates = [c for c in self._candidates if c._party == party]
+
+        # Set preference votes for each candidate
+        for candidate in party_candidates:
+            candidate.preference_votes = self._candidate_votes.get(candidate._name, 0)
+
+        # Sort by preference votes (descending)
+        if self._ranking_variant == 'pure':
+            # Pure open list: just sort by preference votes
+            ranked = sorted(party_candidates,
+                          key=lambda c: c.preference_votes,
+                          reverse=True)
+        else:
+            # Modified/flexible variants would go here (implement later)
+            ranked = party_candidates
+
+        return ranked
+
+    def allocate_candidate_seats(self):
+        """
+        Stage 2: Determine which specific candidates win seats.
+        """
+        self._elected_candidates = []
+
+        for party, seat_count in self._party_seats.items():
+            # Answer to your comment: if party has zero seats, skip it
+            if seat_count == 0:
+                continue  # No seats = no candidates elected
+
+            # Rank this party's candidates
+            ranked = self.rank_candidates_within_party(party)
+
+            # Top N candidates win
+            for i, candidate in enumerate(ranked):
+                candidate.final_rank = i + 1  # 1-indexed rank
+
+                if i < seat_count:  # Top N win
+                    candidate.elected = True
+                    self._elected_candidates.append(candidate)
+
+        return self._elected_candidates
+
+    def run_election(self):
+        """Execute full two-stage open list PR election."""
+        # Stage 1: How many seats per party?
+        self.allocate_party_seats()
+
+        # Stage 2: Which candidates win those seats?
+        self.allocate_candidate_seats()
+
+        return {
+            'party_seats': self._party_seats,
+            'elected_candidates': self._elected_candidates
+        }
+
+        
+    
+
 
             
 
