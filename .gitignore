@@ -19,3 +19,7 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation with political references
+# Keep these archived but not in public repo to avoid political controversies
+docs/archive/
