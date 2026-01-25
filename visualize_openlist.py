@@ -63,8 +63,17 @@ def create_party_allocation_chart(party_votes, party_seats, total_seats):
                     ha='center', va='bottom', fontsize=9)
 
     # Pie chart for seats
+    # Create autopct function that shows both seat count and percentage
+    def make_autopct(seats_list):
+        def autopct_func(pct):
+            # Calculate which slice this is based on percentage
+            total = sum(seats_list)
+            val = int(round(pct * total / 100.0))
+            return f'{val} seats\n({pct:.1f}%)'
+        return autopct_func
+
     wedges, texts, autotexts = ax2.pie(seats, labels=parties, colors=colors,
-                                         autopct='%d seats\n(%.1f%%)',
+                                         autopct=make_autopct(seats),
                                          startangle=90, explode=[0.05]*len(parties),
                                          textprops={'fontsize': 11, 'weight': 'bold'},
                                          wedgeprops={'edgecolor': 'black', 'linewidth': 2})
@@ -295,8 +304,9 @@ def main():
     print("  📊 Vote percentages vs seat percentages")
     print("=" * 80)
 
-    # Show plots if running interactively
-    plt.show()
+    # Note: plt.show() commented out - to view charts, open the PNG files
+    # Uncomment the line below if you want interactive display:
+    # plt.show()
 
 
 if __name__ == '__main__':
