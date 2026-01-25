@@ -27,3 +27,10 @@ docs/archive/
 # Generated visualization files
 *.png
 !docs/**/*.png
+
+# UV virtual environment
+.venv/
+
+# Session summaries (keep local, contains learning journey details)
+# Uncomment to exclude from repo:
+# docs/SESSION_SUMMARY_*.md
