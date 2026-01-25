@@ -1,9 +1,10 @@
 # Session Summary: January 24, 2026
 
 **Session Duration**: Saturday, January 24, 2026
-- Started: ~1:38 AM PST (returned from break)
+- Started: ~1:38 AM PST (returned from previous session)
 - Ended: ~8:54 PM PST
-- Duration: ~19 hours (with breaks)
+- Elapsed time: ~19 hours (includes multiple breaks - definitely not continuous!)
+- Actual work time: Several productive sessions throughout the day
 
 ---
 
@@ -442,7 +443,7 @@ This session demonstrated:
 - **Visualizations Generated:** 5
 - **Bugs Fixed:** 2 (draft bugs + format string bug)
 - **Commits:** 10
-- **Session Duration:** ~19 hours
+- **Elapsed Time:** ~19 hours (with breaks throughout the day)
 - **Concepts Explained:** Closures, lambdas, DRY, format strings, arguments
 
 ---
